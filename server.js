@@ -18,7 +18,7 @@ function saveFile(){fs.writeFileSync(DB,JSON.stringify(db,null,2));}
 function dedupeById(items){const map=new Map();for(const item of (Array.isArray(items)?items:[])){if(item&&item.id!==undefined&&item.id!==null)map.set(String(item.id),item);}return [...map.values()];}
 let saveQueue=Promise.resolve();
 function save(){
- saveQueue=saveQueue.then(async()=>{
+ saveQueue=saveQueue.catch(()=>{}).then(async()=>{
  db.products=dedupeById(db.products);db.orders=dedupeById(db.orders);db.customers=dedupeById(db.customers);
  if(pool){
   const c=await pool.connect();
