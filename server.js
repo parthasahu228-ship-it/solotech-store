@@ -73,7 +73,16 @@ const productImages={
  "Manual Hand Chopper":"https://m.media-amazon.com/images/I/51oOm-nHGKL._SL500_.jpg",
  "Manicure Kit":"https://laz-img-sg.alicdn.com/p/ce77d78d93b352373d2b809c3e881ae7.jpg"
 };
-function budgetImageFor(category,base){return productImages[base]||budgetImages[category]||"";}
+const reliableCategoryImages={
+ "Mobiles":"https://images.unsplash.com/photo-151170 raz?auto=format&fit=crop&w=900&q=80",
+ "Electronics":"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",
+ "Accessories":"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",
+ "Fashion":"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
+ "Home & Kitchen":"https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80",
+ "Appliances":"https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=900&q=80",
+ "Beauty":"https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80"
+};
+function budgetImageFor(category,base){return productImages[base]||reliableCategoryImages[category]||"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80";}
 function ensureBudgetCatalog(){
  const existing=new Set(db.products.map(p=>p.id));
  for(const [category,names] of Object.entries(budgetCatalog)){
