@@ -50,6 +50,9 @@ async function init(){
  }else{
   if(fs.existsSync(DB)){try{db=JSON.parse(fs.readFileSync(DB));}catch{saveFile();}}
   else saveFile();
+  db.products=Array.isArray(db.products)?db.products:seed;
+  db.orders=Array.isArray(db.orders)?db.orders:[];
+  db.customers=Array.isArray(db.customers)?db.customers:[];
   console.log("SOLOTECH running with local file storage; DATABASE_URL is not set");
  }
 }
