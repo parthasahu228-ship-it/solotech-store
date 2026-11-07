@@ -53,7 +53,7 @@ if(process.env.DATABASE_URL){
  sessionOptions.store=new PgSession({pool,createTableIfMissing:true,tableName:"solotech_sessions"});
 }
 app.use(session(sessionOptions));
-app.get("/robots.txt",(q,s)=>s.type("text/plain").send("User-agent: *\\nAllow: /\\nDisallow: /admin.html\\nDisallow: /api/\\nSitemap: https://solotech-store.onrender.com/sitemap.xml\\n"));
+app.get("/robots.txt",(q,s)=>s.type("text/plain").send("User-agent: *\nAllow: /\nDisallow: /admin.html\nDisallow: /api/\nSitemap: https://solotech-store.onrender.com/sitemap.xml\n"));
 app.get("/sitemap.xml",(q,s)=>s.type("application/xml").send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://solotech-store.onrender.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url></urlset>'));
 app.use(express.static(path.join(__dirname,"public")));
 const auth=(q,s,n)=>q.session?.admin?n():s.status(401).json({error:"Admin login required"});
