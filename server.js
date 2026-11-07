@@ -10,7 +10,7 @@ const seed=[
 {id:"a3",name:"Bluetooth Speaker",category:"Electronics",price:999,oldPrice:1499,stock:25,image:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",description:"Compact speaker for home and travel.",active:true},
 {id:"a4",name:"Charging Cable",category:"Accessories",price:199,oldPrice:299,stock:50,image:"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",description:"Everyday charging accessory.",active:true}
 ];
-let pool=null,db={products:seed,orders:[]};
+let pool=process.env.DATABASE_URL?new (require("pg").Pool)({connectionString:process.env.DATABASE_URL,ssl:process.env.DATABASE_SSL==="true"?{rejectUnauthorized:false}:undefined,max:5}):null,db={products:seed,orders:[]};
 function saveFile(){fs.writeFileSync(DB,JSON.stringify(db,null,2));}
 async function save(){
  if(pool){
@@ -27,8 +27,6 @@ async function save(){
 }
 async function init(){
  if(process.env.DATABASE_URL){
-  const {Pool}=require("pg");
-  pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:process.env.DATABASE_SSL==="true"?{rejectUnauthorized:false}:undefined,max:5});
   await pool.query("CREATE TABLE IF NOT EXISTS solotech_products(id text PRIMARY KEY,data jsonb NOT NULL)");
   await pool.query("CREATE TABLE IF NOT EXISTS solotech_orders(id text PRIMARY KEY,data jsonb NOT NULL)");
   const p=await pool.query("SELECT data FROM solotech_products ORDER BY id");
