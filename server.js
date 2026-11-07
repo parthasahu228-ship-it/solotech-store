@@ -146,7 +146,7 @@ async function init(){
   console.log("SOLOTECH running with local file storage; DATABASE_URL is not set");
  }
 }
-app.use(express.json({limit:"1mb"}));
+app.use(express.json({limit:"2mb"}));
 const rateBuckets=new Map();
 function rateLimit(key,limit,windowMs){return(q,s,n)=>{const now=Date.now(),k=key+":"+(q.ip||"unknown"),v=rateBuckets.get(k)||{count:0,start:now};if(now-v.start>windowMs){v.count=0;v.start=now;}v.count++;rateBuckets.set(k,v);if(v.count>limit){s.setHeader("Retry-After",String(Math.ceil((windowMs-(now-v.start))/1000)));return s.status(429).json({error:"Too many attempts. Please wait a little and try again."});}n();};}
 const loginLimit=rateLimit("customer-login",10,15*60*1000),signupLimit=rateLimit("customer-signup",5,60*60*1000),adminLoginLimit=rateLimit("admin-login",5,15*60*1000),trackLimit=rateLimit("order-track",12,15*60*1000);
