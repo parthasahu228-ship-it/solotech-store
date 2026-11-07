@@ -30,6 +30,7 @@ async function save(){
  }else saveFile();
 }
 async function init(){
+ db.customers=db.customers||[];
  if(process.env.DATABASE_URL){
   await pool.query("CREATE TABLE IF NOT EXISTS solotech_products(id text PRIMARY KEY,data jsonb NOT NULL)");
   await pool.query("CREATE TABLE IF NOT EXISTS solotech_orders(id text PRIMARY KEY,data jsonb NOT NULL)");
