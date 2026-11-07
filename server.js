@@ -3,6 +3,7 @@ const session=require("express-session");
 const fs=require("fs");
 const path=require("path");
 const app=express(),PORT=process.env.PORT||3000;
+app.set("trust proxy",1);
 const DB=path.join(__dirname,"store-data.json");
 const seed=[
 {id:"a1",name:"Wireless Headphones",category:"Electronics",price:1299,oldPrice:1799,stock:20,image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",description:"Wireless audio for everyday listening.",active:true},
