@@ -41,13 +41,13 @@ const budgetCatalog={
 };
 const budgetVariants=["Value Pack","Classic","Daily Use","Compact","Saver Edition"];
 const budgetImages={
- "Mobiles":"https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
- "Electronics":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
- "Accessories":"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",
+ "Mobiles":"https://images.ctfassets.net/wcfotm6rrl7u/7JV2RmHVF4YDCAb1wunqZo/f11af8b643d5db4b1975d92377dffad6/Nokia_110-2024-Black-FrontBack-Int.png?fit=pad&h=753&q=88&w=753",
+ "Electronics":"https://prcdn.freetls.fastly.net/release_image/2319/676/2319-676-ac59c260c4901235c9480e019fe70261-1080x1080.jpg?auto=webp&bg-color=fff&fit=bounds&format=jpeg&height=1350&quality=85%2C65&width=1950",
+ "Accessories":"https://sotovikm.ru/images/abt__ut2/banners/all/129/category_02_mobile_accessories.png",
  "Fashion":"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
- "Home & Kitchen":"https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80",
- "Appliances":"https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80",
- "Beauty":"https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80"
+ "Home & Kitchen":"https://www.gefu.com/media/3a/7d/7f/1686146846/12735-gefu-lunchbox-endure-gross-02.jpg",
+ "Appliances":"https://www.abc.cl/dw/image/v2/BCPP_PRD/on/demandware.static/-/Sites-master-catalog/default/dw91433186/images/large/29907.jpg?sh=400&sm=cut&sw=400",
+ "Beauty":"https://eveen.pk/cdn/shop/files/M11_b353bca7-5986-49d5-ad23-0b40db458996.jpg?crop=center&height=1500&v=1714152371&width=1500"
 };
 function ensureBudgetCatalog(){
  const existing=new Set(db.products.map(p=>p.id));
@@ -65,6 +65,16 @@ function ensureBudgetCatalog(){
  }
 }
 
+function refreshCatalogImages(){
+ const seeded=new Set(["a1","a2","a3","a4"]);
+ for(const p of db.products){
+  if(p.id.startsWith("budget-")) p.image=budgetImages[p.category]||p.image;
+  else if(seeded.has(p.id)){
+   const images={a1:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",a2:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",a3:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",a4:"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80"};
+   p.image=images[p.id];
+  }
+ }
+}
 async function init(){
  db.customers=db.customers||[];
  if(process.env.DATABASE_URL){
@@ -143,4 +153,4 @@ app.put("/api/admin/products/:id",auth,async(q,s)=>{try{const p=db.products.find
 app.delete("/api/admin/products/:id",auth,async(q,s)=>{try{db.products=db.products.filter(x=>x.id!==q.params.id);await save();s.json({ok:true});}catch(e){console.error(e);s.sendStatus(500);}});
 app.get("/api/admin/orders",auth,(q,s)=>s.json(db.orders));
 app.patch("/api/admin/orders/:id",auth,async(q,s)=>{try{const o=db.orders.find(x=>x.id===q.params.id);if(!o)return s.sendStatus(404);if(!["New","Confirmed","Packed","Shipped","Delivered","Cancelled"].includes(q.body.status))return s.sendStatus(400);o.status=q.body.status;await save();s.json(o);}catch(e){console.error(e);s.sendStatus(500);}});
-init().then(async()=>{ensureBudgetCatalog();await save();app.listen(PORT,()=>console.log("SOLOTECH listening on "+PORT));}).catch(e=>{console.error("Startup failed",e);process.exit(1);});
+init().then(async()=>{ensureBudgetCatalog();refreshCatalogImages();await save();app.listen(PORT,()=>console.log("SOLOTECH listening on "+PORT));}).catch(e=>{console.error("Startup failed",e);process.exit(1);});
