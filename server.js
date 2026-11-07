@@ -49,6 +49,11 @@ const budgetImages={
  "Appliances":"https://www.abc.cl/dw/image/v2/BCPP_PRD/on/demandware.static/-/Sites-master-catalog/default/dw91433186/images/large/29907.jpg?sh=400&sm=cut&sw=400",
  "Beauty":"https://eveen.pk/cdn/shop/files/M11_b353bca7-5986-49d5-ad23-0b40db458996.jpg?crop=center&height=1500&v=1714152371&width=1500"
 };
+function budgetImageFor(category,base){
+ const seed=[...String(category+"-"+base)].reduce((n,ch)=>n+ch.charCodeAt(0),0);
+ const query=encodeURIComponent("india "+base);
+ return "https://loremflickr.com/640/640/"+query+"?lock="+seed;
+}
 function ensureBudgetCatalog(){
  const existing=new Set(db.products.map(p=>p.id));
  for(const [category,names] of Object.entries(budgetCatalog)){
@@ -59,7 +64,7 @@ function ensureBudgetCatalog(){
    if(category==="Mobiles")price=999+((i*173+j*97)%1000);
    else if(category==="Appliances")price=149+((i*83+j*47)%650);
    else price=49+((i*37+j*29)%450);
-   db.products.push({id,name:base+" - "+variant,category,price,oldPrice:Math.round(price*1.3),stock:20,image:budgetImages[category],description:"Affordable budget pick for everyday use. Cash on Delivery available.",active:true});
+   db.products.push({id,name:base+" - "+variant,category,price,oldPrice:Math.round(price*1.3),stock:20,image:budgetImageFor(category,base),description:"Affordable budget pick for everyday use. Cash on Delivery available.",active:true});
    existing.add(id);
   }));
  }
@@ -68,7 +73,7 @@ function ensureBudgetCatalog(){
 function refreshCatalogImages(){
  const seeded=new Set(["a1","a2","a3","a4"]);
  for(const p of db.products){
-  if(p.id.startsWith("budget-")) p.image=budgetImages[p.category]||p.image;
+  if(p.id.startsWith("budget-")){const base=String(p.name||"").replace(/ - (Value Pack|Classic|Daily Use|Compact|Saver Edition)$/,"");p.image=budgetImageFor(p.category,base);}
   else if(seeded.has(p.id)){
    const images={a1:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",a2:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80",a3:"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",a4:"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80"};
    p.image=images[p.id];
