@@ -74,7 +74,7 @@ const productImages={
  "Manicure Kit":"https://laz-img-sg.alicdn.com/p/ce77d78d93b352373d2b809c3e881ae7.jpg"
 };
 const reliableCategoryImages={
- "Mobiles":"https://images.unsplash.com/photo-151170 raz?auto=format&fit=crop&w=900&q=80",
+ "Mobiles":"https://img-prd-pim.poorvika.com/cdn-cgi/image/width%3D500%2Cheight%3D500%2Cquality%3D75/product/nokia-110-dual-sim-black-02.png",
  "Electronics":"https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=80",
  "Accessories":"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",
  "Fashion":"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
