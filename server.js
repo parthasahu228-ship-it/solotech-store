@@ -42,7 +42,7 @@ const budgetCatalog={
 const budgetVariants=["Value Pack","Classic","Daily Use","Compact","Saver Edition"];
 const budgetImages={
  "Mobiles":"https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
- "Electronics":"https://images.unsplash.com/photo-149ㆁ?auto=format&fit=crop&w=900&q=80",
+ "Electronics":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=900&q=80",
  "Accessories":"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",
  "Fashion":"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
  "Home & Kitchen":"https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80",
@@ -143,4 +143,4 @@ app.put("/api/admin/products/:id",auth,async(q,s)=>{try{const p=db.products.find
 app.delete("/api/admin/products/:id",auth,async(q,s)=>{try{db.products=db.products.filter(x=>x.id!==q.params.id);await save();s.json({ok:true});}catch(e){console.error(e);s.sendStatus(500);}});
 app.get("/api/admin/orders",auth,(q,s)=>s.json(db.orders));
 app.patch("/api/admin/orders/:id",auth,async(q,s)=>{try{const o=db.orders.find(x=>x.id===q.params.id);if(!o)return s.sendStatus(404);if(!["New","Confirmed","Packed","Shipped","Delivered","Cancelled"].includes(q.body.status))return s.sendStatus(400);o.status=q.body.status;await save();s.json(o);}catch(e){console.error(e);s.sendStatus(500);}});
-init().then(async()=>{ensureBudgetCatalog();await save();app.listen(PORT,()=>console.log("SOLOTECH listening on "+PORT));}))).catch(e=>{console.error("Startup failed",e);process.exit(1);});
+init().then(async()=>{ensureBudgetCatalog();await save();app.listen(PORT,()=>console.log("SOLOTECH listening on "+PORT));}).catch(e=>{console.error("Startup failed",e);process.exit(1);});
