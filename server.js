@@ -59,7 +59,7 @@ app.get("/api/health",(q,s)=>s.json({ok:true,storage:pool?"postgres":"local"}));
 app.get("/api/products",(q,s)=>s.json(db.products.filter(p=>p.active)));
 app.post("/api/orders",async(q,s)=>{try{
  const b=q.body||{};
- if(!b.name||!/^[6-9]\d{9}$/.test(String(b.phone||""))||!b.address||!b.city||!b.state||!/^\\d{6}$/.test(String(b.pin||""))||!Array.isArray(b.items)||!b.items.length)return s.status(400).json({error:"Please enter all delivery details correctly."});
+ if(!b.name||!/^[6-9]\d{9}$/.test(String(b.phone||""))||!b.address||!b.city||!b.state||!/^[0-9]{6}$/.test(String(b.pin||""))||!Array.isArray(b.items)||!b.items.length)return s.status(400).json({error:"Please enter all delivery details correctly."});
  let items=[],total=0;
  for(const x of b.items){const p=db.products.find(y=>y.id===x.id&&y.active),qty=Math.max(1,Math.min(10,Number(x.qty)||1));if(!p||p.stock<qty)return s.status(400).json({error:"Product stock unavailable. Refresh your cart."});items.push({id:p.id,name:p.name,price:p.price,qty});total+=p.price*qty;}
  items.forEach(i=>db.products.find(p=>p.id===i.id).stock-=i.qty);
