@@ -29,6 +29,42 @@ async function save(){
   }catch(e){await c.query("ROLLBACK");throw e;}finally{c.release();}
  }else saveFile();
 }
+
+const budgetCatalog={
+ "Mobiles": ["Basic Keypad Mobile","Compact Feature Phone","Dual SIM Keypad Phone","Long Battery Feature Phone","Torch Feature Phone","FM Radio Mobile","Large Button Mobile","Entry Level Keypad Phone","Mini Feature Phone","Everyday Keypad Phone"],
+ "Electronics": ["USB LED Light","Mini Bluetooth Speaker","Wired Earphones","USB Desk Fan","Digital Alarm Clock","LED Night Lamp","Mini Torch","USB Reading Light","Portable FM Radio","Basic Wired Mouse"],
+ "Accessories": ["Phone Stand","USB Type-C Cable","Micro USB Cable","Screen Guard","Back Cover","Cable Protector","Earphone Case","Laptop Sleeve","OTG Adapter","Pop Socket Grip"],
+ "Fashion": ["Cotton T-Shirt","Casual Cap","Everyday Socks Pack","Canvas Belt","Cotton Handkerchief Set","Simple Wallet","Hair Band Set","Basic Sunglasses","Daily Use Scarf","Casual Tote Bag"],
+ "Home & Kitchen": ["Steel Water Bottle","Kitchen Storage Box","Lunch Box","Measuring Spoon Set","Vegetable Peeler","Dish Rack","Cleaning Brush Set","Cotton Kitchen Towel","Reusable Food Container","Manual Hand Chopper"],
+ "Appliances": ["Mini USB Fan","LED Emergency Light","Electric Kettle","Hand Blender","Rechargeable Torch","Extension Board","Electric Lunch Box","Mini Sewing Machine","Mosquito Bat","Digital Weighing Scale"],
+ "Beauty": ["Comb Set","Makeup Pouch","Nail Cutter Set","Face Towel Set","Hair Brush","Cosmetic Mirror","Travel Bottle Set","Makeup Sponge Set","Headband Set","Manicure Kit"]
+};
+const budgetVariants=["Value Pack","Classic","Daily Use","Compact","Saver Edition"];
+const budgetImages={
+ "Mobiles":"https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=900&q=80",
+ "Electronics":"https://images.unsplash.com/photo-149ㆁ?auto=format&fit=crop&w=900&q=80",
+ "Accessories":"https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80",
+ "Fashion":"https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=900&q=80",
+ "Home & Kitchen":"https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=900&q=80",
+ "Appliances":"https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80",
+ "Beauty":"https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80"
+};
+function ensureBudgetCatalog(){
+ const existing=new Set(db.products.map(p=>p.id));
+ for(const [category,names] of Object.entries(budgetCatalog)){
+  names.forEach((base,i)=>budgetVariants.forEach((variant,j)=>{
+   const id="budget-"+category.toLowerCase().replace(/[^a-z]+/g,"-")+"-"+String(i*5+j+1).padStart(2,"0");
+   if(existing.has(id))return;
+   let price;
+   if(category==="Mobiles")price=999+((i*173+j*97)%1000);
+   else if(category==="Appliances")price=149+((i*83+j*47)%650);
+   else price=49+((i*37+j*29)%450);
+   db.products.push({id,name:base+" - "+variant,category,price,oldPrice:Math.round(price*1.3),stock:20,image:budgetImages[category],description:"Affordable budget pick for everyday use. Cash on Delivery available.",active:true});
+   existing.add(id);
+  }));
+ }
+}
+
 async function init(){
  db.customers=db.customers||[];
  if(process.env.DATABASE_URL){
@@ -107,4 +143,4 @@ app.put("/api/admin/products/:id",auth,async(q,s)=>{try{const p=db.products.find
 app.delete("/api/admin/products/:id",auth,async(q,s)=>{try{db.products=db.products.filter(x=>x.id!==q.params.id);await save();s.json({ok:true});}catch(e){console.error(e);s.sendStatus(500);}});
 app.get("/api/admin/orders",auth,(q,s)=>s.json(db.orders));
 app.patch("/api/admin/orders/:id",auth,async(q,s)=>{try{const o=db.orders.find(x=>x.id===q.params.id);if(!o)return s.sendStatus(404);if(!["New","Confirmed","Packed","Shipped","Delivered","Cancelled"].includes(q.body.status))return s.sendStatus(400);o.status=q.body.status;await save();s.json(o);}catch(e){console.error(e);s.sendStatus(500);}});
-init().then(()=>app.listen(PORT,()=>console.log("SOLOTECH listening on "+PORT))).catch(e=>{console.error("Startup failed",e);process.exit(1);});
+init().then(async()=>{ensureBudgetCatalog();await save();app.listen(PORT,()=>console.log("SOLOTECH listening on "+PORT));}))).catch(e=>{console.error("Startup failed",e);process.exit(1);});
